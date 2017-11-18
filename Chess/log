@@ -1,0 +1,7 @@
+v0.1
+    * created display for the title and the board.
+
+v0.2
+    * implemented the timers for the chess game
+v0.3
+    * implemented the knight object constructor

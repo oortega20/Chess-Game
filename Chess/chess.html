@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chess Game</title>
+        <link rel="stylesheet"  href="chess.css"/>
+    </head>
+
+    <body>
+        <canvas id = "board" width = "1345px" height = "630px"> </canvas>
+        <canvas id = "pieces" width = "1345px" height = "630px"> </canvas>
+        <canvas id = "timer" width = "420px" height = "630px"> </canvas>
+        <button id = "one" onclick = "oneMinGame()">1 Minute</button>
+        <button id = "five" onclick = "fiveMinGame()">5 Minutes</button>
+        <button id = "ten" onclick ="tenMinGame()">10 Minutes</button>
+        <button id = "thirty" onclick ="thirtyMinGame()">30 Minutes</button>
+        <button id = "untimed" onclick = "untimed()">No Timer</button>
+        <button id = "start" onclick = "startTimer()"> Start</button>
+        <button id = "switch" onclick = "switchTurn()"> Switch</button>
+        <button id = "white" onclick = "w()">w</button>
+        <button id = "black" onclick = "b()">b</button>
+
+        <script src = "pieces.js"></script>
+        <script src = "timer.js"></script>
+        <script src = "board.js"></script>
+        <script src = "scoreboard.js"></script>
+        <script src = "main.js"></script>
+    </body>
+</html>

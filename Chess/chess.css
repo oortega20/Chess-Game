@@ -1,0 +1,36 @@
+#board, #pieces {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border: 2px solid black;
+}
+
+#board {
+    z-index: 1;
+}
+#pieces {
+    z-index: 2;
+}
+
+#timer {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+#one {
+    position: absolute;
+    top: 100px;
+    z-index: 3;
+}
+#start {
+    position: absolute;
+    top: 200px;
+    z-index: 3;
+}
+#switch {
+    position: absolute;
+    top: 150px;
+    z-index: 3;
+}
