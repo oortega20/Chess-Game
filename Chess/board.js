@@ -48,7 +48,7 @@ class Tile {
                             if(g.isValidMove(oldSquare, Tile)) {
                                 var piece = oldSquare.getPiece();
                                 piece.placePiece(oldSquare, Tile);
-                                g.checkIfInCheck();
+                                g.inCheck();
                                 g.switchTurn();
                             }
                         }
