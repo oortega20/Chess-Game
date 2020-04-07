@@ -45,13 +45,12 @@ class Tile {
                 // move the piece to the potential tiles
                         if(Tile == tiles[i]) {
                             var oldSquare = g.getPriorSquare();
-                            if(g.isValidMove(oldSquare, Tile)) {
-                                var piece = oldSquare.getPiece();
-                                piece.placePiece(oldSquare, Tile);
-                                g.inCheck();
-                                g.switchTurn();
-                            }
+                            var piece = oldSquare.getPiece();
+                            piece.placePiece(oldSquare, Tile);
+                            g.switchTurn();
                         }
+                        //TODO: right now incheck only checks if the current player is in check
+                        //TODO: change that so we have an arbitrary is in check function that takes in a player
                         tiles[i].stopHighlighting();
                     }
                 }

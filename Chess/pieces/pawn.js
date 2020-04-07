@@ -73,23 +73,69 @@ class Pawn extends Piece {
         var oneSpace = [];
         var leftCapture = [];
         var rightCapture = [];
-        if(this.color == "white") {
-            twoSpaces = [row + 2, col];
-            oneSpace = [row + 1, col];
-            leftCapture = [row + 1, col - 1];
-            rightCapture = [row + 1, col + 1];
-        } else {
-            twoSpaces = [row - 2, col];
-            oneSpace = [row - 1, col];
-            leftCapture = [row - 1, col - 1];
-            rightCapture = [row - 1, col + 1];
-        }
+        twoSpaces = [row + (2 * gameState.player), col];
+        oneSpace = [row + (1 * gameState.player), col];
+        leftCapture = [row + (1 * gameState.player), col + (1 * gameState.player)];
+        rightCapture = [row + (1 * gameState.player), col - (1 * gameState.player)];
         // TODO: check the logic for this bad boy.
         if(gameState.isEnPassant()) {
             this.runEnPassentChecks(leftCapture, rightCapture, gameState, potentialTiles)
         }
-        this.runOtherChecks(oneSpace, twoSpaces, leftCapture, rightCapture, gameState, potentialTiles);
+        console.log("trying to validate my movements");
+        var potentialTiles = [twoSpaces, oneSpace, leftCapture, rightCapture];
+        potentialTiles = this.validatePawnMovements(gameState, potentialTiles);
+        console.log("validated my movements");
         return potentialTiles;
         
     }
+    
+    runEnPassentChecks(leftCapture, rightCapture, gameState, tiles) {
+        //TODO: redo this logic as of right now I don't know how to do this
+        var board = gameState.getBoard();
+        var priorSquare = gameState.getPriorSquare();
+        var currentSquare = board[row][col];
+        var dCol = currentSquare.getCol() - priorSquare.getCol();
+        if(dCol == -1) {
+            var row = leftCapture[0];
+            var col = leftCapture[1];
+            potentialTiles.push(board[row][col]);
+        } else {
+            var row = rightCapture[0];
+            var col = rightCapture[1];
+            potentialTiles.push(board[row][col]);
+        }        
+    }
+    
+    validatePawnMovements(gameState, potentialTiles) {
+        var validTiles = [];
+        var board = gameState.getBoard();
+        var oldSquare = this.getSquare();
+        for (var i = 0; i < 4; i++) {
+            console.log(potentialTiles[i]);
+            var row = potentialTiles[i][0];
+            var col = potentialTiles[i][1];
+            //Checking if two squares ahead is valid
+            if(gameState.coordsInBoard(row, col) && 
+               i == 0 &&
+               board[row][col].getPiece() == null
+               && this.numMoves == 0) {
+                validTiles.push(board[row][col]);
+            //Checking if the square ahead is valid
+            } else if (gameState.coordsInBoard(row, col) && 
+                       i == 1 &&
+                       board[row][col].getPiece() == null) {
+                validTiles.push(board[row][col]);
+            //Checking the capture moves
+            } else if ((i == 2 || i == 3) &&
+                       gameState.coordsInBoard(row, col) &&
+                       board[row][col].getPiece() != null &&
+                       board[row][col].getPiece().getColor() != this.getColor()) {
+                validTiles.push(board[row][col]);
+            } else {
+                continue;
+            }
+        }
+        return validTiles;
+    }
+
 }

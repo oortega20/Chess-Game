@@ -1,4 +1,3 @@
-import gameState from gameState.js
 // the different canvases
 var boardCanvas = document.getElementById("board");
 var ctx = boardCanvas.getContext("2d");
@@ -11,6 +10,6 @@ var tctx = timerCanvas.getContext("2d");
 
 function main() {
     var gameState = new GameState();
-    var scoreboard = new Scoreboard();
+    var scoreboard = new ScoreBoard();
 }
 main();

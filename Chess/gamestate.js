@@ -7,6 +7,7 @@ class GameState {
         GameState.setUpBoard(this);
         //TODO: when i eventually create the start screen for the game i will have to have some info to transfer to create the instance of the timer for the game
         this.turn = 'white';
+        this.player = 1;
         this.clickCounts = 0;
         this.priorSquare = null;
         this.potentialTiles = null;
@@ -197,11 +198,17 @@ class GameState {
         return this.potentialTiles;
     }
 
+    coordsInBoard(x, y) {
+        return x < 8 &&  x > -1 && y < 8 && y > - 1;
+    }
+
     switchTurn(){
         if (this.turn === 'white'){
             this.turn = 'black';
+            this.player = -1;
         } else{
             this.turn = 'white';
+            this.player = 1;
         }
     }
 
@@ -227,12 +234,12 @@ class GameState {
             for (var j = 0; j < potentialTiles.length; j++) {
                 if(kSquare == potentialTiles[j]) {
                     alert("move from", oldSquare, " to", newSquare, " places piece in check");
-                    this.isCheck = True;
+                    this.isCheck = true;
                     
                 }
             }
         }
-        this.isCheck = False;
+        this.isCheck = false;
         return this.isCheck;
 
     }
@@ -301,14 +308,6 @@ class GameState {
         return this.board;
     }
 
-    isEnPassant() {
-        return false;
-    }
-
-    getPassingPiece() {
-        return this.passingPiece;
-    }
-
     getPriorSquare() {
         return  this.priorSquare;
     }
@@ -320,73 +319,7 @@ class GameState {
     getBlackPieces() {
         return this.blackPieces;
     }
-    //somehow this is eliminating the other piece?
-    isValidMove(oldSquare, newSquare) {
-        //TODO: get rid of this logic its very ugly 
-        var rookSquare;
-        var rNS;
-        var rook;
-        var board = this.getBoard();
-        if(this.isCastle(oldSquare, newSquare)) {
-            if(this.color == "white") {
-                var row = 0;
-            } else {
-                var row = 7;
-            }
-            var kingSide = false;
-            var queenSide = false;;
-            for(var i = 0; i < 8; i++) {
-                if (board[row][1] == newSquare) {
-                    kingSide = true;
-                }
-                if(board[row][5] == newSquare) {
-                    queenSide = true;
-                }
-            }
-            if(kingSide) {
-                rookSquare = board[row][0];
-                rNS = board[row][2];
-            } else {
-                rookSquare = board[row][7];
-                rNS = board[row][4];
-            }
-            rook = rookSquare.getPiece();
-            rookSquare.setPiece(null);
-            rNS.setPiece(rook);
-        }
-        var piece = oldSquare.getPiece();
-        var otherPiece = newSquare.getPiece();
-        oldSquare.setPiece(null);
-        newSquare.setPiece(piece);
-        if(this.turn == "white") {
-            var pieces = this.getBlackPieces();
-            var kSquare = this.findKing("white");
-        } else {
-            var pieces = this.getWhitePieces();
-            var kSquare = this.findKing("black");
-        }
-        for(var i = 0; i < pieces.length; i++){
-            var row = pieces[i].getSquare().getRow();
-            var col = pieces[i].getSquare().getCol();
-            var potentialTiles = pieces[i].getPotentialTiles(row, col, this);
-            for(var j = 0; j < potentialTiles.length; j++) {
-                if(kSquare == potentialTiles[j]) {
-                    oldSquare.setPiece(piece);
-                    newSquare.setPiece(otherPiece);
-                    if(rook) {
-                        rookSquare.setPiece(rook);
-                        rNS.setPiece(null);
-                    }
-                    alert("Yo watchu doing??");
-                    return false;
-                }
-            }
 
-        }
-        oldSquare.setPiece(piece);
-        newSquare.setPiece(otherPiece);
-        return true;
-    }
 
 
     findKing(kingColor) {
