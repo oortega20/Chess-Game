@@ -77,14 +77,13 @@ class Pawn extends Piece {
         oneSpace = [row + (1 * gameState.player), col];
         leftCapture = [row + (1 * gameState.player), col + (1 * gameState.player)];
         rightCapture = [row + (1 * gameState.player), col - (1 * gameState.player)];
-        // TODO: check the logic for this bad boy.
+      
+        var potentialTiles = [twoSpaces, oneSpace, leftCapture, rightCapture];
+        potentialTiles = this.validatePawnMovements(gameState, potentialTiles);
+        //TODO: probably make the canEnPassant a method of the pawn? makes more sense to me
         if(gameState.isEnPassant()) {
             this.runEnPassentChecks(leftCapture, rightCapture, gameState, potentialTiles)
         }
-        console.log("trying to validate my movements");
-        var potentialTiles = [twoSpaces, oneSpace, leftCapture, rightCapture];
-        potentialTiles = this.validatePawnMovements(gameState, potentialTiles);
-        console.log("validated my movements");
         return potentialTiles;
         
     }
