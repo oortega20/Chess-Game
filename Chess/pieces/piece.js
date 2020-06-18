@@ -39,7 +39,7 @@ class Piece {
         var board = gameState.getBoard();
         var startR = row;
         var startC = col;
-        while(row <= 7 && row >= 0 && col <= 7 && col >= 0) {
+        while(gameState.coordsInBoard(row, col)) {
             if (board[row][col].getPiece() == this) {
                 row += dRow;
                 col += dCol;
