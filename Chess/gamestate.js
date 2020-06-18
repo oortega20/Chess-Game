@@ -5,7 +5,8 @@ class GameState {
         this.blackPieces = [];
         this.board = GameState.createBoard();
         GameState.setUpBoard(this);
-        //TODO: when i eventually create the start screen for the game i will have to have some info to transfer to create the instance of the timer for the game
+        //TODO: when i eventually create the start screen for the game 
+        //i will have to have some info to transfer to create the instance of the timer for the game
         this.turn = 'white';
         this.player = 1;
         this.clickCounts = 0;
@@ -194,6 +195,26 @@ class GameState {
         }
     }
 
+    getClicks() {
+        return this.clickCounts;
+    }
+
+    getBoard() {
+        return this.board;
+    }
+
+    getPriorSquare() {
+        return  this.priorSquare;
+    }
+
+    getWhitePieces() {
+        return this.whitePieces;
+    }
+
+    getBlackPieces() {
+        return this.blackPieces;
+    }
+
     getPotentialTiles() {
         return this.potentialTiles;
     }
@@ -245,16 +266,15 @@ class GameState {
     }
 
     verifyNotCheck(oldSquare, newSquare, piece) {
-        //Ensures current move is not a move that places a piece in check
-        var capturedPiece = checkMove(oldSquare, newSquare, piece);
+        /* Return: boolean which indicates whether move places a piece their king in check */
+        var capturedPiece = checkMove(oldSquare, newSquare);
         var isCheck = this.inCheck();
         this.undoCheckMove(oldSquare, newSquare, piece, capturedPiece);
         return isCheck
     }
 
-    checkMove(oldSquare, newSquare, piece) {
-        //when doing the verification of legality use these methods. don't call move or place piece.
-        var capturedPiece = checkMove(oldSquare, newSquare, piece);
+    checkMove(oldSquare, newSquare) {
+        /*when doing the verification of legality use these methods. don't call move or place piece. */
         if(newSquare.getPiece() != null) {
             capturedPiece = newSquare.getPiece().copy();
         }  
@@ -268,59 +288,7 @@ class GameState {
         newSquare.setPiece(capturedPiece);
     }
 
-    isCastle(oldSquare, newSquare) {
-        var board = this.getBoard();
-        var piece = oldSquare.getPiece();
-        if(piece != null && piece instanceof King) {
-            var o = 0;
-            var n = 0;
-            var passedO = false;
-            var passedN = false;
-            if(piece.getColor() == "white") {
-                var row = 0;
-            } else {
-                var row = 7;
-            }
-            for(var i = 0; i < 8; i++) {
-                if (board[row][i] == oldSquare) {
-                    passedO = true;
-                    o = i;
-                }
-                if(board[row][i] == newSquare) {
-                    passedN = true;
-                    n = i;
-                }
-            }
-            if(passedN && passedO && Math.abs(o - n) == 2) {
-                return true;
-            }
-            return false;
-        }
-        return false;
-
-    }
-
-    getClicks() {
-        return this.clickCounts;
-    }
-
-    getBoard() {
-        return this.board;
-    }
-
-    getPriorSquare() {
-        return  this.priorSquare;
-    }
-
-    getWhitePieces() {
-        return this.whitePieces;
-    }
-
-    getBlackPieces() {
-        return this.blackPieces;
-    }
-
-
+    
 
     findKing(kingColor) {
         var board = this.getBoard();
@@ -336,30 +304,4 @@ class GameState {
         }
     }
 
-    rowIsClear(piece, squares) {
-        var board = this.getBoard();
-        if(this.turn == "white") {
-            var pieces = this.getBlackPieces();
-        } else {
-            var pieces = this.getWhitePieces();
-        }
-        for (var i = 0; i < pieces.length; i++) {
-            var row = pieces[i].getSquare().getRow();
-            var col = pieces[i].getSquare().getCol();
-            var potentialTiles = pieces[i].getPotentialTiles(row, col, this);
-            for(var j = 0; j < potentialTiles.length; j++) {
-                for(var k = 0; k < squares.length; k++) {
-                    if (squares[k] == potentialTiles[j]) {
-                        return false;
-                    }
-                }
-            }
-        }
-        for(var l = 0; l < squares.length; l++) {
-            if(squares[l].getPiece() != null) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

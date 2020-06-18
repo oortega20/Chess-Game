@@ -29,7 +29,6 @@ class Tile {
                 if (piece != null && piece.getColor() == g.getTurn()) {
                     var row  = Tile.getRow();
                     var col = Tile.getCol();
-                    var board = g.getBoard();
                     var potentialTiles = piece.getPotentialTiles(row, col, g);
                     for(var i = 0; i < potentialTiles.length; i++) {
                         potentialTiles[i].highlightBlue();
@@ -42,15 +41,12 @@ class Tile {
                 var tiles = g.getPotentialTiles();
                 if(tiles != null) {
                     for(var i = 0; i < tiles.length; i++) {
-                // move the piece to the potential tiles
                         if(Tile == tiles[i]) {
                             var oldSquare = g.getPriorSquare();
                             var piece = oldSquare.getPiece();
                             piece.placePiece(oldSquare, Tile);
                             g.switchTurn();
                         }
-                        //TODO: right now incheck only checks if the current player is in check
-                        //TODO: change that so we have an arbitrary is in check function that takes in a player
                         tiles[i].stopHighlighting();
                     }
                 }
@@ -58,7 +54,6 @@ class Tile {
                 g.priorSquare = null;
                 g.clickCounts = 0;
             }
-            //TODO: write the magic for making a turn
         }
 
         function onHover(Tile) {
@@ -75,7 +70,6 @@ class Tile {
         Tile.div.addEventListener("mouseover", function() { onHover(Tile)  });
     }
 
-    //TODO: rewrite this now that i'm caching my Tile objects
     static createDiv(Tile) {
         var dimensions = 60;
         var topBorder = Tile.getYPos();
@@ -114,6 +108,10 @@ class Tile {
         return this.col;
     }
 
+    getGameCoords() {
+        return [this.getRow(), this.getCol];
+    }
+
     getXPos() {
         return this.xPos;
     }
@@ -121,7 +119,7 @@ class Tile {
     getYPos() {
         return this.yPos;
     }
-
+    
     highlightYellow() {
         var d = this.div;
         if(this.colorHighlight == "none") {

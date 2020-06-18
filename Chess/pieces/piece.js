@@ -58,9 +58,12 @@ class Piece {
 
     isLegal(oldSquare, newSquare) {
         /*
-        Return: a boolean that indicates whether the given move does not move into a piece of its own color 
-                and the move does not place piece in check subsequent pieces will have to make sure the piece can move
-                in the specified manner ie horse move is an L.
+        Return: boolean that indicates whether the given move does not move into a 
+                piece of its own color 
+                and the move does not place team in check. 
+                Each piece will have to make sure the piece can move
+                in the specified manner
+                ie: the horse will have to determine whether a move is an L.
         */
         if (newSquare.getPiece() != null) {
             return this.getColor() != newSquare.getPiece().getColor() && verifyNotCheck(oldSquare, newSquare, this);
@@ -70,21 +73,37 @@ class Piece {
     
     placePiece(oldSquare, newSquare) {
         
-        /*TODO: structure will be the following: placePiece should only be called after a call to isLegal on the following piece.
-                will assume that move is legal. 
-                Have place piece return old piece that was there if one exists.
-
+        /*  structure will be the following: 
+            placePiece should only be called after a call to isLegal on the following piece.
+            will assume that move is legal. 
+            Have place piece return old piece that was there if one exists.
         */
-        if(newSquare.getPiece() != null) {
-            var capturedPiece = newSquare.getPiece();
-            capturedPiece.removeFromPlay(newSquare);
+       
+        if (this.isLegal(oldSquare, newSquare)) {
+            if(newSquare.getPiece() != null) {
+                var capturedPiece = newSquare.getPiece();
+                capturedPiece.removeFromPlay(newSquare);
+            }
+            this.move(oldSquare, newSquare);
+            /*TODO: handle the castling, enPassant, and pawn promotion */
+            if (newSquare.getPiece() instanceof King && 
+                newSquare.getPiece().isCastlingMove(oldSquare, newSquare)) {
+                newSquare.getPiece().completeCastlingMove()
+            }
+            if (newSquare.getPiece() instanceof Pawn &&
+                newSquare.getPiece().isEnPassant(oldSquare, newSquare)) {
+                newSquare.getPiece().completeEnPassant()
+            }
+            if (newSquare.getPiece() instanceof Pawn &&
+                newSquare.getPiece().isPromotion()){
+                newSquare.getPiece().completePromotion();
+            }
         }
-        this.move(oldSquare, newSquare);
-        
+
     }
     
     move(oldSquare, newSquare) {
-        //Performs the rendering of the movement, does not handle legality
+        /* Performs the rendering of the movement, does not handle legality */
         var newCoords = this.getCoords(newSquare.getXPos(), newSquare.getYPos());
         this.xPos = newCoords[0];
         this.yPos = newCoords[1];
@@ -101,6 +120,7 @@ class Piece {
     }
     
     removeFromPlay(currentSquare) {
+        /* remove piece from current gameplay if it was captured */
         this.eraseImage(currentSquare);
         var g = currentSquare.getGameState();
         var color = this.color;

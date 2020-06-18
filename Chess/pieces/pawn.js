@@ -66,45 +66,7 @@ class Pawn extends Piece {
     getCoords(xPos, yPos) {
         return [xPos + 20, yPos + 16];
     }
-    
-    getPotentialTiles(row,  col, gameState) {
-        var potentialTiles = [];
-        var twoSpaces = [];
-        var oneSpace = [];
-        var leftCapture = [];
-        var rightCapture = [];
-        twoSpaces = [row + (2 * gameState.player), col];
-        oneSpace = [row + (1 * gameState.player), col];
-        leftCapture = [row + (1 * gameState.player), col + (1 * gameState.player)];
-        rightCapture = [row + (1 * gameState.player), col - (1 * gameState.player)];
-      
-        var potentialTiles = [twoSpaces, oneSpace, leftCapture, rightCapture];
-        potentialTiles = this.validatePawnMovements(gameState, potentialTiles);
-        //TODO: probably make the canEnPassant a method of the pawn? makes more sense to me
-        if(gameState.isEnPassant()) {
-            this.runEnPassentChecks(leftCapture, rightCapture, gameState, potentialTiles)
-        }
-        return potentialTiles;
-        
-    }
-    
-    runEnPassentChecks(leftCapture, rightCapture, gameState, tiles) {
-        //TODO: redo this logic as of right now I don't know how to do this
-        var board = gameState.getBoard();
-        var priorSquare = gameState.getPriorSquare();
-        var currentSquare = board[row][col];
-        var dCol = currentSquare.getCol() - priorSquare.getCol();
-        if(dCol == -1) {
-            var row = leftCapture[0];
-            var col = leftCapture[1];
-            potentialTiles.push(board[row][col]);
-        } else {
-            var row = rightCapture[0];
-            var col = rightCapture[1];
-            potentialTiles.push(board[row][col]);
-        }        
-    }
-    
+       
     validatePawnMovements(gameState, potentialTiles) {
         var validTiles = [];
         var board = gameState.getBoard();
@@ -114,10 +76,12 @@ class Pawn extends Piece {
             var row = potentialTiles[i][0];
             var col = potentialTiles[i][1];
             //Checking if two squares ahead is valid
+            console.log(potentialTiles[1])
             if(gameState.coordsInBoard(row, col) && 
                i == 0 &&
-               board[row][col].getPiece() == null
-               && this.numMoves == 0) {
+               board[row][col].getPiece() == null &&
+               board[potentialTiles[1][0]][potentialTiles[1][1]].getPiece() == null &&
+               this.numMoves == 0) {
                 validTiles.push(board[row][col]);
             //Checking if the square ahead is valid
             } else if (gameState.coordsInBoard(row, col) && 
@@ -135,6 +99,47 @@ class Pawn extends Piece {
             }
         }
         return validTiles;
+    }
+    
+    getPotentialTiles(row,  col, gameState) {
+        var potentialTiles = [];
+        var twoSpaces = [];
+        var oneSpace = [];
+        var leftCapture = [];
+        var rightCapture = [];
+        twoSpaces = [row + (2 * gameState.player), col];
+        oneSpace = [row + (1 * gameState.player), col];
+        leftCapture = [row + (1 * gameState.player), col + (1 * gameState.player)];
+        rightCapture = [row + (1 * gameState.player), col - (1 * gameState.player)];
+      
+        var potentialTiles = [twoSpaces, oneSpace, leftCapture, rightCapture];
+        potentialTiles = this.validatePawnMovements(gameState, potentialTiles);
+        
+
+        this.addEnPassantTiles(potentialTiles)
+        return potentialTiles;
+        
+    }
+
+    /*TODO: handle the logic for these tricky methods */
+    addEnPassantTiles(potentialTiles) {
+        return 0;   
+    }
+
+    isEnPassant(oldSquare, newSquare) {
+        return true;
+    }
+
+    completeEnPassant() {
+        return 0;
+    }
+
+    isPromotion() {
+        return 0;
+    }
+
+    completePromotion() {
+        return 0;
     }
 
 }

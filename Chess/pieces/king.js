@@ -82,15 +82,31 @@ class King extends Piece {
         canvas.stroke(); 
     }
     
+    static getCoords(xPos, yPos) {
+        return [xPos + 9, yPos + 4];
+    }
+    getCoords(xPos, yPos) {
+        return [xPos + 9, yPos + 4];
+    }
+
     getPotentialTiles(row,  col, gameState) {
         var board = gameState.getBoard();
         var piece = board[row][col].getPiece();
         var potentialTiles = [];
-        var coords = [[row - 1, col], [row - 1, col + 1], [row, col + 1], [row + 1, col + 1], [row + 1, col], [row + 1, col - 1], [row, col - 1], [row - 1, col - 1]];
+        var coords = [[row - 1, col - 1], 
+                      [row - 1, col],
+                      [row - 1, col - 1],
+                      [row, col - 1], 
+                      [row, col + 1], 
+                      [row + 1, col + 1], 
+                      [row + 1, col], 
+                      [row + 1, col - 1], 
+                      ];
          for(var i = 0; i < coords.length; i++) {
+            console.log(coords[i])
             var r = coords[i][0];
             var c = coords[i][1];
-            if((r >= 0 && r <= 7) && (c >= 0 && c <= 7)) {
+            if(gameState.coordsInBoard(r, c)) {
                 var otherPiece = board[r][c].getPiece();
                 if(otherPiece == null || otherPiece.getColor() != piece.getColor()){
                     potentialTiles.push(board[r][c]);
@@ -99,57 +115,92 @@ class King extends Piece {
             }
 
         }
-        //TODO: Look over this then you can begin working on your paper again
-        if(gameState.getTurn() == this.color) {
-            if(this.color == "white") {
-                var kingSide = gameState.rowIsClear(this, [board[0][4], board[0][5]]);
-                var queenSide = gameState.rowIsClear(this, [board[0][2], board[0][3]]);
-            } else {
-                var kingSide = gameState.rowIsClear(this,[board[7][4], board[7][5]]);
-                var queenSide = gameState.rowIsClear(this,[board[7][2], board[7][3]]);
-            }
-        }
-        
-        this.addCastlingTiles(kingSide, queenSide, gameState, potentialTiles);
-        return potentialTiles;
+        this.addCastlingTiles(potentialTiles, gameState)
+        return potentialTiles;     
     }
     
-    addCastlingTiles(kingSide, queenSide, gameState, potentialTiles) {
+    addCastlingTiles(potentialTiles, gameState) {
         var board = gameState.getBoard();
         var oldSquare = this.getSquare();
-        if (this.color == "white") {
-            if(kingSide) {
-                var rook = board[0][0].getPiece();
-                if(rook != null && rook instanceof Rook && rook.numMoves == 0 && this.numMoves == 0) {
-                    potentialTiles.push(board[0][1]);
-                }
-            }
-            if(queenSide) {
-                var rook = board[0][7].getPiece();
-                if(rook != null && rook instanceof Rook && rook.numMoves == 0 && this.numMoves == 0) {
-                    potentialTiles.push(board[0][5]);
-                }
-            }
-        } else {
-            if(kingSide) { 
-                var rook = board[7][0].getPiece();
-                if(rook != null && rook instanceof Rook && rook.numMoves == 0 && this.numMoves == 0) {
-                    potentialTiles.push(board[7][1]);
-                }
-            }
-            if(queenSide) {
-                var rook = board[7][7].getPiece();
-                if(rook != null && rook instanceof Rook && rook.numMoves == 0 && this.numMoves == 0) {
-                    potentialTiles.push(board[7][5]);
-                }
-            }
+        /* if the king has moved we can no longer castle */
+        var pieces = [];
+        var threateningTiles = [];
+        var kingSide = [];
+        var queenSide = [];
+        var addKing = true;
+        var addQueen = true;
+        if (this.numMoves > 0) {
+            return;
         }
+        /* determine the side */
+        if (this.turn == 'white') {
+            pieces = gameState.getBlackPieces()
+        } else {
+            pieces = gameState.getWhitePieces()
+        }
+
+        /*obtain squares the other side can potentially attack*/
+        for (var piece in pieces) {
+            var row = piece.getSquare.getRow();
+            var col = piece.getSquare.getCol();
+            threateningTiles.concat(piece.getPotentialTiles(row, col, gameState));
+        }
+        console.log(threateningTiles);
+        /*if these squares are in the corresponding squares in between the rook and king
+        then we cannot castle there, here we also check if the corresponding rooks have not moved*/
+        if (this.turn == 'white') {
+            queenSide = [board[0][1], board[0][2], board[0][3]]
+            kingSide =  [board[0][5], board[0,6]];
+            kingRook = board[0][0].getPiece();
+            queenRook = board[0][7].getPiece();
+
+        } else {
+            queenSide = [board[7][1], board[7][2], board[7][3]]
+            kingSide = [board[7][5], board[7,6]];
+        }
+        if (kingRook instanceof Rook &&
+            kingRook.numMoves == 0) {
+             for (var threatTile in threateningTiles) {
+                 for (var emptyTile in kingSide) {
+                     if (threatTile === emptyTile) 
+                     {
+                         addKing = false;
+                     }
+                 }
+             }   
+            }
+        if (queenRook instanceof Rook &&
+            queenRook.numMoves == 0) {
+            for (var threatTile in threateningTiles) {
+                for (var emptyTile in kingSide) {
+                    if (threatTile === emptyTile) 
+                    {
+                        addQueen = false;
+                    }
+                }
+            }  
+        }
+        if (this.turn == 'white') {
+            if(addKing)
+                potentialTiles.add(board[0][2]);
+            if(addQueen)
+                potentialTiles.add(board[0][6]);
+        } else {
+            if (addKing)
+                potentialTiles.add(board[7][2]);
+            if (addQueen)
+                potentialTiles.add(board[7][6]);
+        }
+
     }
-    
-    static getCoords(xPos, yPos) {
-        return [xPos + 9, yPos + 4];
+
+    isCastlingMove(oldSquare, newSquare) {
+        /* TODO: Check to see if the move to the new square is a king move */
+        return true;
     }
-    getCoords(xPos, yPos) {
-        return [xPos + 9, yPos + 4];
+
+    completeCastlingMove() {
+        /* TODO: moves the corresponding rook after a castling move */
+        return;
     }
 }
