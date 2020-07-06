@@ -72,11 +72,9 @@ class Pawn extends Piece {
         var board = gameState.getBoard();
         var oldSquare = this.getSquare();
         for (var i = 0; i < 4; i++) {
-            console.log(potentialTiles[i]);
             var row = potentialTiles[i][0];
             var col = potentialTiles[i][1];
             //Checking if two squares ahead is valid
-            console.log(potentialTiles[1])
             if(gameState.coordsInBoard(row, col) && 
                i == 0 &&
                board[row][col].getPiece() == null &&

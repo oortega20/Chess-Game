@@ -254,7 +254,7 @@ class GameState {
             var potentialTiles = pieces[i].getPotentialTiles(row, col, this);
             for (var j = 0; j < potentialTiles.length; j++) {
                 if(kSquare == potentialTiles[j]) {
-                    alert("move from", oldSquare, " to", newSquare, " places piece in check");
+                    console.log("move from", oldSquare, " to", newSquare, " places piece in check");
                     this.isCheck = true;
                     
                 }
@@ -263,14 +263,6 @@ class GameState {
         this.isCheck = false;
         return this.isCheck;
 
-    }
-
-    verifyNotCheck(oldSquare, newSquare, piece) {
-        /* Return: boolean which indicates whether move places a piece their king in check */
-        var capturedPiece = checkMove(oldSquare, newSquare);
-        var isCheck = this.inCheck();
-        this.undoCheckMove(oldSquare, newSquare, piece, capturedPiece);
-        return isCheck
     }
 
     checkMove(oldSquare, newSquare) {
@@ -291,16 +283,15 @@ class GameState {
     
 
     findKing(kingColor) {
-        var board = this.getBoard();
-        for(var i = 0; i < 8; i++) {
-            for(var j = 0; j < 8; j++) {
-                if(board[i][j].getPiece() != null) {
-                    var piece = board[i][j].getPiece();
-                    if(piece instanceof King && piece.getColor() == kingColor) {
-                        return board[i][j];
-                    }
-                }
-            }
+        var pieces = [];
+        if (kingColor == 'white') {
+            pieces = this.getWhitePieces();
+        } else {
+            pieces = this.getBlackPieces();
+        }
+        for (var piece in pieces) {
+            if (piece instanceof King)
+                return piece;
         }
     }
 

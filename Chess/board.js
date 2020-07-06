@@ -22,7 +22,6 @@ class Tile {
     static addListeners(Tile) {
         function onClick(Tile) {
             var g = Tile.getGameState();
-            console.log(g);
             if (g.getClicks() == 0) {
                 var piece = Tile.getPiece();
                 var g = Tile.getGameState();
@@ -109,7 +108,7 @@ class Tile {
     }
 
     getGameCoords() {
-        return [this.getRow(), this.getCol];
+        return [this.getRow(), this.getCol()];
     }
 
     getXPos() {

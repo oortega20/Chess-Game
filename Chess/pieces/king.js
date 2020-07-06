@@ -103,7 +103,6 @@ class King extends Piece {
                       [row + 1, col - 1], 
                       ];
          for(var i = 0; i < coords.length; i++) {
-            console.log(coords[i])
             var r = coords[i][0];
             var c = coords[i][1];
             if(gameState.coordsInBoard(r, c)) {
@@ -115,7 +114,13 @@ class King extends Piece {
             }
 
         }
-        this.addCastlingTiles(potentialTiles, gameState)
+        /*Edge Case: when verifying if a move is legal
+          we should not have to check if the other side
+          performing a check will place our king in 
+          check */
+        if (this.square.gameState.turn == this.color) {
+            this.addCastlingTiles(potentialTiles, gameState);
+        }
         return potentialTiles;     
     }
     
@@ -129,40 +134,43 @@ class King extends Piece {
         var queenSide = [];
         var addKing = true;
         var addQueen = true;
+        var kingRook = null;
+        var queenRook = null;
         if (this.numMoves > 0) {
             return;
         }
         /* determine the side */
-        if (this.turn == 'white') {
-            pieces = gameState.getBlackPieces()
+        if (gameState.turn == 'white') {
+            pieces = gameState.getBlackPieces();
         } else {
-            pieces = gameState.getWhitePieces()
+            pieces = gameState.getWhitePieces();
         }
-
         /*obtain squares the other side can potentially attack*/
-        for (var piece in pieces) {
-            var row = piece.getSquare.getRow();
-            var col = piece.getSquare.getCol();
-            threateningTiles.concat(piece.getPotentialTiles(row, col, gameState));
+        for (var piece of pieces) {
+            var row = piece.getSquare().getRow();
+            var col = piece.getSquare().getCol();
+            threateningTiles = threateningTiles.concat(piece.getPotentialTiles(row, col, gameState));
         }
-        console.log(threateningTiles);
         /*if these squares are in the corresponding squares in between the rook and king
         then we cannot castle there, here we also check if the corresponding rooks have not moved*/
-        if (this.turn == 'white') {
+        if (this.color == 'white') {
             queenSide = [board[0][1], board[0][2], board[0][3]]
-            kingSide =  [board[0][5], board[0,6]];
+            kingSide =  [board[0][5], board[0][6]];
             kingRook = board[0][0].getPiece();
             queenRook = board[0][7].getPiece();
 
         } else {
             queenSide = [board[7][1], board[7][2], board[7][3]]
-            kingSide = [board[7][5], board[7,6]];
+            kingSide = [board[7][5], board[7][6]];
+            kingRook = board[7][0].getPiece();
+            queenRook = board[7][7].getPiece();
         }
+        
         if (kingRook instanceof Rook &&
             kingRook.numMoves == 0) {
-             for (var threatTile in threateningTiles) {
-                 for (var emptyTile in kingSide) {
-                     if (threatTile === emptyTile) 
+             for (var threatTile of threateningTiles) {
+                 for (var emptyTile of kingSide) {
+                     if (threatTile == emptyTile || emptyTile.Piece != null) 
                      {
                          addKing = false;
                      }
@@ -171,36 +179,28 @@ class King extends Piece {
             }
         if (queenRook instanceof Rook &&
             queenRook.numMoves == 0) {
-            for (var threatTile in threateningTiles) {
-                for (var emptyTile in kingSide) {
-                    if (threatTile === emptyTile) 
+            for (var threatTile of threateningTiles) {
+                for (var emptyTile of queenSide) {
+
+                    if (threatTile == emptyTile || emptyTile.Piece != null) 
                     {
                         addQueen = false;
                     }
                 }
             }  
         }
-        if (this.turn == 'white') {
+        if (this.color == 'white') {
             if(addKing)
-                potentialTiles.add(board[0][2]);
+                potentialTiles.push(board[0][6]);
             if(addQueen)
-                potentialTiles.add(board[0][6]);
+                potentialTiles.push(board[0][2]);
         } else {
             if (addKing)
-                potentialTiles.add(board[7][2]);
+                potentialTiles.push(board[7][6]);
             if (addQueen)
-                potentialTiles.add(board[7][6]);
+                potentialTiles.push(board[7][2]);
         }
 
     }
 
-    isCastlingMove(oldSquare, newSquare) {
-        /* TODO: Check to see if the move to the new square is a king move */
-        return true;
-    }
-
-    completeCastlingMove() {
-        /* TODO: moves the corresponding rook after a castling move */
-        return;
-    }
 }
