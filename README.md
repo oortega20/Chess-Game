@@ -1,6 +1,6 @@
 # Chess-Game
 
-![Chess Game written using Java-Script](chess_main.png)
+![Chess Game written using Java-Script](images/chess_main.png)
 
 
 To open game:
