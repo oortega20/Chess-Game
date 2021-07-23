@@ -1,7 +1,9 @@
 # Chess-Game
-Chess game using Javascript - (In Progress)
 
-To open on a Google Chrome Browser:
+![Chess Game written using Java-Script](chess_main.png)
+
+
+To open game:
 run the following command on your terminal:
 
-```chrome chess.html```
+```start Chess-Game/Chess/chess.html```
